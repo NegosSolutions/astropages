@@ -295,7 +295,7 @@
 }
 /*swithch*/
 /*pricing*/
-/* Estilo general */
+/* General Styles */
 body {
   margin: 0;
   font-family: Arial, sans-serif;
@@ -315,7 +315,7 @@ body {
   color: #eceff1;
 }
 
-/* Contenedor de tarjetas */
+/* Cards Container */
 .cards {
   position: relative;
 }
@@ -328,7 +328,7 @@ body {
   margin-top: 2em;
 }
 
-/* Estilo de cada tarjeta */
+/* Individual Card */
 .card {
   flex: 1 1 14rem;
   max-width: 20rem;
@@ -357,7 +357,7 @@ body {
   line-height: 1.4;
 }
 
-/* Botón de acción */
+/* Call to Action Button */
 .card__button {
   display: block;
   align-self: end;
@@ -386,4 +386,18 @@ body {
 .card:hover > .card__button {
   outline: none;
   background-color: #0d0d0d;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .cards__inner {
+    flex-direction: column;
+    gap: 1em;
+  }
+
+  .card {
+    max-width: 100%;
+    flex: 1 1 auto;
+    margin: 0 auto;
+  }
 }
