@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Modern Pixel Grid</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f0f0f0;
+    }
+    header {
+      background: #111;
+      color: white;
+      padding: 1rem;
+      text-align: center;
+      font-size: 1.5rem;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(100, 10px);
+      gap: 1px;
+      max-width: fit-content;
+      margin: 2rem auto;
+      background: #ccc;
+    }
+    .pixel {
+      width: 10px;
+      height: 10px;
+      position: relative;
+      background: white;
+      cursor: pointer;
+      overflow: hidden;
+      border: 1px solid #ddd;
+    }
+    .pixel img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      pointer-events: none;
+    }
+    .pixel:hover::after {
+      content: attr(data-title);
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(0, 0, 0, 0.6);
+      color: white;
+      font-size: 10px;
+      padding: 2px;
+      text-align: center;
+    }
+    footer {
+      text-align: center;
+      padding: 1rem;
+      color: #777;
+    }
+  </style>
+</head>
+<body>
+  <header>Página de Píxeles Moderna</header>
+  <div class="grid" id="pixelGrid"></div>
+  <footer>&copy; 2025 - Inspirado en The Million Dollar Homepage</footer>
+
+  <script>
+    const grid = document.getElementById("pixelGrid");
+    const gridSize = 100;
+    const pixelCount = gridSize * gridSize;
+    const pixels = Array(pixelCount).fill(null);
+
+    for (let i = 0; i < pixelCount; i++) {
+      const savedData = JSON.parse(localStorage.getItem("pixel_" + i));
+      pixels[i] = savedData ? { ...savedData, index: i } : null;
+    }
+
+    const used = Array(pixelCount).fill(false);
+
+    function createPixelBlock(startIndex, width, height, data) {
+      const block = document.createElement("div");
+      block.classList.add("pixel");
+      block.style.gridColumnStart = (startIndex % gridSize) + 1;
+      block.style.gridRowStart = Math.floor(startIndex / gridSize) + 1;
+      block.style.gridColumnEnd = `span ${width}`;
+      block.style.gridRowEnd = `span ${height}`;
+      block.setAttribute("data-title", data.title || "");
+      block.onclick = () => window.open(data.url, "_blank");
+
+      if (data.img) {
+        const img = document.createElement("img");
+        img.src = data.img;
+        block.appendChild(img);
+      }
+
+      // MODO EDICIÓN TEMPORAL
+      block.ondblclick = (e) => {
+        e.stopPropagation();
+        const newUrl = prompt("Editar URL:", data.url);
+        const newTitle = prompt("Editar título:", data.title);
+        const newImg = prompt("Editar imagen (URL):", data.img);
+        if (newUrl) {
+          for (let y = 0; y < height; y++) {
+            for (let x = 0; x < width; x++) {
+              const index = startIndex + y * gridSize + x;
+              localStorage.setItem("pixel_" + index, JSON.stringify({ url: newUrl, title: newTitle, img: newImg }));
+            }
+          }
+          location.reload();
+        }
+      };
+
+      return block;
+    }
+
+    function sameData(a, b) {
+      return JSON.stringify(a) === JSON.stringify(b);
+    }
+
+    for (let y = 0; y < gridSize; y++) {
+      for (let x = 0; x < gridSize; x++) {
+        const i = y * gridSize + x;
+        if (used[i] || !pixels[i]) continue;
+
+        const current = pixels[i];
+        let maxWidth = 1;
+
+        while (x + maxWidth < gridSize && sameData(pixels[i + maxWidth], current)) {
+          maxWidth++;
+        }
+
+        let maxHeight = 1;
+        outer: while (y + maxHeight < gridSize) {
+          for (let dx = 0; dx < maxWidth; dx++) {
+            const idx = i + maxHeight * gridSize + dx;
+            if (!sameData(pixels[idx], current)) {
+              break outer;
+            }
+          }
+          maxHeight++;
+        }
+
+        for (let dy = 0; dy < maxHeight; dy++) {
+          for (let dx = 0; dx < maxWidth; dx++) {
+            used[i + dy * gridSize + dx] = true;
+          }
+        }
+
+        grid.appendChild(createPixelBlock(i, maxWidth, maxHeight, current));
+      }
+    }
+
+    for (let i = 0; i < pixelCount; i++) {
+      if (used[i]) continue;
+      const pixel = document.createElement("div");
+      pixel.classList.add("pixel");
+      pixel.onclick = () => {
+        const url = prompt("Ingrese una URL para este píxel:");
+        const title = prompt("Ingrese un título para este píxel:");
+        const img = prompt("Ingrese la URL de una imagen (logo):");
+        if (url) {
+          localStorage.setItem("pixel_" + i, JSON.stringify({ url, title, img }));
+          location.reload();
+        }
+      };
+      grid.appendChild(pixel);
+    }
+  </script>
+</body>
+</html>
