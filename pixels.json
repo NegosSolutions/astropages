@@ -1,27 +1,27 @@
 [
     {
-      "start": 0,
-      "width": 5,
-      "height": 5,
+      "start": 90,
+      "width": 10,
+      "height": 10,
       "url": "https://sites.google.com/view/negossolutions",
       "title": "NEGOS",
       "img": "https://negossolutions.github.io/negos/assets/images/LOGO.png"
     },
     {
-      "start": 5,
-      "width": 2,
-      "height": 2,
-      "url": "https://otrositio.com",
-      "title": "Otro Proyecto",
-      "img": "https://via.placeholder.com/20"
-    },
-    {
-      "start": 9999,
+      "start": 2500,
       "width": 1,
       "height": 1,
+      "url": "https://otrositio.com",
+      "title": "Otro Proyecto",
+      "img": "https://negossolutions.github.io/negos/assets/images/LOGO.png"
+    },
+    {
+      "start": 9090,
+      "width": 10,
+      "height": 10,
       "url": "https://pequeño.com",
-      "title": "Pequeño Pixel",
-      "img": "https://via.placeholder.com/10"
+      "title": "ᗩᔕ༒尺۝",
+      "img": "https://negossolutions.github.io/astropages/assets/img/astro11.gif"
     }
   ]
   

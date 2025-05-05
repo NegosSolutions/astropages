@@ -3,145 +3,120 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Página del Millón</title>
+  <title>My pixel</title>
   <link rel="stylesheet" href="main.css">
-  <style>
-    #spacer {
-      height: 1000000px;
-      position: relative;
-    }
-    #pixelGrid {
-      position: absolute;
-      top: 0;
-      left: 50%;
-      transform: translateX(-50%);
-    }
-    #sentinel {
-      height: 1px;
-    }
-  </style>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/fontawesome.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/solid.min.css">
 </head>
 <body>
-  <header>Página del Millón</header>
-  <div class="controls">
-    <p id="contador"></p>
+  <header>
+    <div class="header-content">
+      <h1 class="site-title">My Pixel</h1>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="info-section">
+      <h2>Compra y personaliza tus píxeles</h2>
+      <p>¡Adquiere espacio en nuestra cuadrícula de 100x100! Personaliza con tu imagen y enlace, desde 1$. Inspirado en <a href="http://www.milliondollarhomepage.com/" target="_blank">The Million Dollar Homepage.</a></p>
+      <div class="buy-container">
+        <button class="btn-buy">
+          <i class="fas fa-shopping-cart btn-icon"></i>
+          Solicitar píxel
+        </button>
+      </div>
+    </div>
+
+    <div class="grid-container">
+      <div class="grid" id="pixelGrid"></div>
+    </div>
   </div>
-  <div id="spacer">
-    <div class="grid" id="pixelGrid"></div>
-    <div id="sentinel"></div>
-  </div>
-  <footer>&copy; 2025 - Inspirado en The Million Dollar Homepage<br>
-    BY <a href="https://negossolutions.github.io/astropages/esindex.html">ᗩᔕ༒尺۝</a>
+
+  <!-- Indicador de información del píxel -->
+  <div id="pixelInfo" style="position: fixed; bottom: 20px; right: 20px; background-color: rgba(52, 152, 219, 0.9); color: white; padding: 10px 15px; border-radius: 4px; z-index: 100; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2); display: none;"></div>
+
+  <footer>
+    <div class="footer-content">
+      <div class="footer-links">
+        <a href="#">Inicio</a>
+        <a href="#">Sobre Nosotros</a>
+        <a href="#">FAQ</a>
+        <a href="#">Contacto</a>
+      </div>
+      <p>&copy; 2025 - By ᗩᔕ༒尺۝</p>
+    </div>
   </footer>
 
   <script>
     const grid = document.getElementById("pixelGrid");
+    const pixelInfo = document.getElementById("pixelInfo");
     const gridSize = 100;
-    const totalPixels = 1000000;
-    const rowHeight = 10 + 1; // pixel height + gap
-    const visibleRows = 150;
-    const bufferRows = 50;
-    const chunkRows = visibleRows + 2 * bufferRows;
-    const chunkSize = gridSize * chunkRows;
-
-    let data = [];
-    let ocupados = 0;
-    const used = Array(totalPixels).fill(false);
-
-    const rendered = new Set();
-
-    function indexToCoords(index) {
-      return {
-        row: Math.floor(index / gridSize),
-        col: index % gridSize
-      };
+    const pixelCount = gridSize * gridSize;
+    const used = Array(pixelCount).fill(false);
+    
+    // Función para mostrar la información del píxel
+    function showPixelInfo(pixelNumber) {
+      pixelInfo.textContent = `Píxel #${pixelNumber} (Fila: ${Math.floor(pixelNumber / gridSize) + 1}, Columna: ${(pixelNumber % gridSize) + 1})`;
+      pixelInfo.style.display = "block";
+      
+      // Ocultar después de 3 segundos
+      setTimeout(() => {
+        pixelInfo.style.display = "none";
+      }, 3000);
     }
-
-    function coordsToIndex(row, col) {
-      return row * gridSize + col;
-    }
-
-    function clearOutOfRange(startRow, endRow) {
-      [...grid.children].forEach(el => {
-        const rowStart = parseInt(el.style.gridRowStart);
-        if (rowStart < startRow - bufferRows || rowStart > endRow + bufferRows) {
-          grid.removeChild(el);
-        }
-      });
-    }
-
-    function renderChunk(startRow, endRow) {
-      clearOutOfRange(startRow, endRow);
-
-      for (const block of data) {
-        const { start, width, height, url, title, img } = block;
-        const { row, col } = indexToCoords(start);
-
-        if (row + height < startRow || row > endRow) continue;
-
-        const div = document.createElement("div");
-        div.classList.add("pixel");
-        div.style.gridColumnStart = col + 1;
-        div.style.gridRowStart = row + 1;
-        div.style.gridColumnEnd = `span ${width}`;
-        div.style.gridRowEnd = `span ${height}`;
-        div.setAttribute("data-title", title || "");
-        div.onclick = () => window.open(url, "_blank");
-
-        if (img) {
-          const image = document.createElement("img");
-          image.src = img;
-          div.appendChild(image);
-        }
-
-        for (let dy = 0; dy < height; dy++) {
-          for (let dx = 0; dx < width; dx++) {
-            const index = coordsToIndex(row + dy, col + dx);
-            if (!used[index]) {
-              used[index] = true;
-              ocupados++;
-            }
-          }
-        }
-
-        grid.appendChild(div);
-      }
-
-      // Render blancos
-      for (let row = startRow; row <= endRow; row++) {
-        for (let col = 0; col < gridSize; col++) {
-          const index = coordsToIndex(row, col);
-          if (used[index]) continue;
-          if (rendered.has(index)) continue;
-          rendered.add(index);
-
-          const div = document.createElement("div");
-          div.classList.add("pixel");
-          div.style.gridColumnStart = col + 1;
-          div.style.gridRowStart = row + 1;
-          grid.appendChild(div);
-        }
-      }
-
-      document.getElementById("contador").textContent = `Píxeles ocupados: ${ocupados} / ${totalPixels}`;
-    }
-
-    function updateVisibleArea() {
-      const scrollTop = window.scrollY;
-      const startRow = Math.max(Math.floor(scrollTop / rowHeight) - bufferRows, 0);
-      const endRow = Math.min(startRow + chunkRows, totalPixels / gridSize);
-      renderChunk(startRow, endRow);
-    }
-
-    window.addEventListener("scroll", () => {
-      requestAnimationFrame(updateVisibleArea);
+    
+    // Botón de compra
+    document.querySelector('.btn-buy').addEventListener('click', function() {
+      alert('¡Función de compra de píxeles! Implementa aquí tu lógica de compra.');
     });
 
     fetch("pixels.json")
       .then(response => response.json())
-      .then(json => {
-        data = json;
-        updateVisibleArea(); // Inicial
+      .then(data => {
+        for (const block of data) {
+          const { start, width, height, url, title, img } = block;
+
+          // Crear div grande para el bloque
+          const div = document.createElement("div");
+          div.classList.add("pixel");
+          div.style.gridColumnStart = (start % gridSize) + 1;
+          div.style.gridRowStart = Math.floor(start / gridSize) + 1;
+          div.style.gridColumnEnd = `span ${width}`;
+          div.style.gridRowEnd = `span ${height}`;
+          div.setAttribute("data-title", title || "");
+          div.onclick = () => window.open(url, "_blank");
+
+          if (img) {
+            const image = document.createElement("img");
+            image.src = img;
+            div.appendChild(image);
+          }
+
+          // Marcar los píxeles ocupados para no renderizarlos luego
+          for (let dy = 0; dy < height; dy++) {
+            for (let dx = 0; dx < width; dx++) {
+              const index = start + dy * gridSize + dx;
+              used[index] = true;
+            }
+          }
+
+          grid.appendChild(div);
+        }
+
+        // Rellenar con píxeles vacíos y añadir la funcionalidad para mostrar el número
+        for (let i = 0; i < pixelCount; i++) {
+          if (used[i]) continue;
+          
+          const emptyPixel = document.createElement("div");
+          emptyPixel.classList.add("pixel", "available");
+          
+          // Agregar evento de clic para mostrar el número del píxel
+          emptyPixel.addEventListener("click", function() {
+            showPixelInfo(i);
+          });
+          
+          grid.appendChild(emptyPixel);
+        }
       });
   </script>
 </body>
