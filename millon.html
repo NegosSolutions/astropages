@@ -43,6 +43,24 @@
     .closeBUY:hover {
       color: #000;
     }
+    
+    /* Estilo para el tooltip */
+    .tooltip {
+      position: fixed;
+      background-color: rgba(0, 0, 0, 0.8);
+      color: white;
+      padding: 5px 10px;
+      border-radius: 4px;
+      z-index: 100;
+      font-size: 14px;
+      pointer-events: none;
+      transition: opacity 0.3s;
+      max-width: 250px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    }
   </style>
 </head>
 <body>
@@ -74,42 +92,86 @@
     <div class="popup-contentBUY">
       <span class="closeBUY">&times;</span>
       <div class="containerBUY">
-        <p>Solicitar Pixel</p>
+        <p style="color: white;">Solicitar Pixel</p>
   
-        <!-- Formulario compatible con Formspree -->
-        <form action="https://formspree.io/f/tu_id_aqui" method="POST" class="wrapperBUY">
-          <label class="titleBUY" for="email">Correo electrónico</label>
+        <!-- Formulario-->
+        <form action="https://formspree.io/f/mgvozdrl" method="POST" class="wrapperBUY">
+          <label class="titleBUY" for="email" style="color: white;">Correo electrónico</label>
           <div class="input-boxBUY">
-            <input type="email" id="email" name="email" required placeholder="tucorreo@example.com">
+            <input type="email" id="email" name="email" required placeholder="tucorreo@example.com" style="color: gray;">
           </div>
         
           <div class="pass-settingsBUY">
-            <label class="titleBUY">Configuración de pixel</label>
+            <label class="titleBUY" style="color: white;">Configuración de pixel</label>
             <ul class="optionsBUY">
               <li class="optionBUY">
                 <input type="checkbox" id="venderpixel" name="venderpixel" value="sí" checked>
-                <label for="venderpixel">
+                <label for="venderpixel" style="color: white;">
                   Quiero que mi píxel esté disponible para venta en el futuro.
                 </label>
               </li>
               <li class="optionBUY">
                 <input type="checkbox" id="recibirclicks" name="recibirclicks" value="sí">
-                <label for="recibirclicks">
+                <label for="recibirclicks" style="color: white;">
                   Deseo recibir estadísticas sobre la cantidad de clics que reciba mi píxel.
                 </label>
               </li>
             </ul>
           </div>
-        
           <button type="submit" class="generate-btnBUY">Enviar Solicitud</button>
         </form>
-        
       </div>
     </div>
   </div>
+
+  <!-- Pop-up FREE -->
+<div id="popupFREE" class="popupBUY hidden">
+  <div class="popup-contentBUY">
+    <span class="closeFREE">&times;</span>
+    <div class="containerBUY">
+      <p style="color: white;">Acceso Gratuito</p>
+      <form action="https://formspree.io/f/mgvozdrl" method="POST" class="wrapperBUY">
+        <label class="titleBUY" for="email" style="color: white;">Correo electrónico</label>
+        <div class="input-boxBUY">
+          <input type="email" id="email" name="email" required placeholder="Tu correo NO se publicará" style="color: grey">
+        </div>
+        <label class="titleBUY" for="url" style="color:white;">Url de pixel</label>
+        <div class="input-boxBUY">
+          <input type="url" id="url" name="url" required placeholder="http://www.example.com" style="color: grey;">
+        </div>
+        <label class="titleBUY" for="text" style="color:white;">Link de imagen</label>
+        <div class="input-boxBUY">
+          <input type="img" id="img" name="img" required placeholder="http://www.example.com/imagen1.jpg" style="color: grey;">
+        </div>
+        <label class="titleBUY" for="text" style="color:white;">Titulo de pixel</label>
+        <div class="input-boxBUY">
+          <input type="text" id="text" name="text" required placeholder="Pixel 1" style="color: grey;">
+        </div>
+        <div class="pass-settingsBUY">
+          <label class="titleBUY" style="color: white;">Tu pixel será gratuito hasta agotar existencias, podrás decidir comprarlo, para mantenerlo de manera permanente.</label>
+          <ul class="optionsBUY">
+          </ul>
+        </div>
+        <button type="submit" class="generate-btnBUY">Enviar Solicitud</button>
+      </form>
+    </div>
+  </div>
+</div>
   
+  <!-- Tooltip para mostrar el título del píxel -->
+  <div id="pixelTooltip" class="tooltip" style="display: none;"></div>
 
   <script>
+  const header = document.querySelector("header");
+
+  window.addEventListener("scroll", () => {
+    if (window.scrollY > 50) {
+      header.classList.add("fade-out");
+    } else {
+      header.classList.remove("fade-out");
+    }
+  });
+
   // Mostrar el pop-up
   document.querySelector('.btn-buy').addEventListener('click', function () {
     document.getElementById('popupBUY').classList.remove('hidden');
@@ -134,6 +196,29 @@
       cerrarPopupYAnuncio();
     }
   });
+
+  window.addEventListener('DOMContentLoaded', () => {
+    const openFreeBtn = document.getElementById('openFreePopup');
+    const popupFree = document.getElementById('popupFREE');
+    const closeFreeBtn = document.querySelector('.closeFREE');
+
+    if (openFreeBtn && popupFree && closeFreeBtn) {
+      openFreeBtn.addEventListener('click', function (e) {
+        e.preventDefault();
+        popupFree.classList.remove('hidden');
+      });
+
+      closeFreeBtn.addEventListener('click', function () {
+        popupFree.classList.add('hidden');
+      });
+
+      window.addEventListener('click', function (e) {
+        if (e.target === popupFree) {
+          popupFree.classList.add('hidden');
+        }
+      });
+    }
+  });
   </script>
 
     <div class="grid-container">
@@ -148,8 +233,8 @@
     <div class="footer-content">
       <div class="footer-links">
         <a href="#">Inicio</a>
-        <a href="#">Sobre Nosotros</a>
-        <a href="#">FAQ</a>
+        <a href="https://sites.google.com/view/negossolutions">NEGOS</a>
+        <a href="#" id="openFreePopup">FREE</a>
         <a href="#">Contacto</a>
       </div>
       <p>&copy; 2025 - By <a href="https://negossolutions.github.io/astropages/esindex.html" target="_blank">ᗩᔕ༒尺۝</a></p>
@@ -159,11 +244,12 @@
   <script>
     const grid = document.getElementById("pixelGrid");
     const pixelInfo = document.getElementById("pixelInfo");
+    const tooltip = document.getElementById("pixelTooltip");
     const gridSize = 100;
     const pixelCount = gridSize * gridSize;
     const used = Array(pixelCount).fill(false);
     
-    // Función para mostrar la información del píxel
+    // Función para mostrar la información del píxel al hacer clic
     function showPixelInfo(pixelNumber) {
       pixelInfo.textContent = `Píxel #${pixelNumber} (Fila: ${Math.floor(pixelNumber / gridSize) + 1}, Columna: ${(pixelNumber % gridSize) + 1})`;
       pixelInfo.style.display = "block";
@@ -174,6 +260,30 @@
       }, 3000);
     }
     
+    // Funciones para manejar el tooltip
+    function showTooltip(e, text) {
+      if (!text) return;
+      
+      tooltip.textContent = text;
+      tooltip.style.display = "block";
+      
+      // Posicionar el tooltip ligeramente por encima del cursor
+      const x = e.clientX;
+      const y = e.clientY - 30;
+      
+      // Ajustar posición para evitar que se salga de la pantalla
+      if (x + tooltip.offsetWidth > window.innerWidth) {
+        tooltip.style.left = (window.innerWidth - tooltip.offsetWidth - 10) + "px";
+      } else {
+        tooltip.style.left = x + "px";
+      }
+      
+      tooltip.style.top = y + "px";
+    }
+    
+    function hideTooltip() {
+      tooltip.style.display = "none";
+    }
 
     fetch("pixels.json")
       .then(response => response.json())
@@ -190,6 +300,17 @@
           div.style.gridRowEnd = `span ${height}`;
           div.setAttribute("data-title", title || "");
           div.onclick = () => window.open(url, "_blank");
+          
+          // Agregar eventos para mostrar/ocultar el tooltip
+          div.addEventListener("mouseover", function(e) {
+            showTooltip(e, this.getAttribute("data-title"));
+          });
+          
+          div.addEventListener("mousemove", function(e) {
+            showTooltip(e, this.getAttribute("data-title"));
+          });
+          
+          div.addEventListener("mouseout", hideTooltip);
 
           if (img) {
             const image = document.createElement("img");
@@ -214,15 +335,34 @@
           
           const emptyPixel = document.createElement("div");
           emptyPixel.classList.add("pixel", "available");
+          emptyPixel.setAttribute("data-title", "Píxel disponible - ¡Cómpralo ahora!");
           
           // Agregar evento de clic para mostrar el número del píxel
           emptyPixel.addEventListener("click", function() {
             showPixelInfo(i);
           });
           
+          // Agregar eventos para mostrar/ocultar el tooltip
+          emptyPixel.addEventListener("mouseover", function(e) {
+            showTooltip(e, this.getAttribute("data-title"));
+          });
+          
+          emptyPixel.addEventListener("mousemove", function(e) {
+            showTooltip(e, this.getAttribute("data-title"));
+          });
+          
+          emptyPixel.addEventListener("mouseout", hideTooltip);
+          
           grid.appendChild(emptyPixel);
         }
       });
+      
+    // Actualizar posición del tooltip al hacer scroll
+    window.addEventListener("scroll", function() {
+      if (tooltip.style.display !== "none") {
+        hideTooltip();
+      }
+    });
   </script>
 </body>
 </html>
