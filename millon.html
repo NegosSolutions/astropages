@@ -3,22 +3,63 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>My pixel</title>
+  <title>My Pixel</title>
   <link rel="stylesheet" href="main.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/fontawesome.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/solid.min.css">
+  <style>
+    .popupBUY {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    .popupBUY.hidden {
+      display: none;
+    }
+
+    .popup-contentBUY {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      max-width: 500px;
+      width: 100%;
+      position: relative;
+    }
+
+    .closeBUY {
+      position: absolute;
+      top: 10px;
+      right: 15px;
+      font-size: 24px;
+      cursor: pointer;
+      color: #888;
+    }
+
+    .closeBUY:hover {
+      color: #000;
+    }
+  </style>
 </head>
 <body>
   <header>
     <div class="header-content">
-      <h1 class="site-title">My Pixel</h1>
+      <h1 class="site-title"><a href="" style="text-decoration: none; color: inherit;">My Pixel</a></h1>
     </div>
   </header>
 
+  <!-- Botón para mostrar el pop-up -->
   <div class="container">
     <div class="info-section">
       <h2>Compra y personaliza tus píxeles</h2>
-      <p>¡Adquiere espacio en nuestra cuadrícula de 100x100! Personaliza con tu imagen y enlace, desde 1$. Inspirado en <a href="http://www.milliondollarhomepage.com/" target="_blank">The Million Dollar Homepage.</a></p>
+      <p>
+        ¡Adquiere espacio en nuestra cuadrícula de 100x100! Personaliza con tu imagen y enlace, desde 1$. Inspirado en 
+        <a href="http://www.milliondollarhomepage.com/" target="_blank">The Million Dollar Homepage.</a>
+      </p>
       <div class="buy-container">
         <button class="btn-buy">
           <i class="fas fa-shopping-cart btn-icon"></i>
@@ -26,6 +67,74 @@
         </button>
       </div>
     </div>
+  </div>
+
+  <!-- Pop-up de compra -->
+  <div id="popupBUY" class="popupBUY hidden">
+    <div class="popup-contentBUY">
+      <span class="closeBUY">&times;</span>
+      <div class="containerBUY">
+        <p>Solicitar Pixel</p>
+  
+        <!-- Formulario compatible con Formspree -->
+        <form action="https://formspree.io/f/tu_id_aqui" method="POST" class="wrapperBUY">
+          <label class="titleBUY" for="email">Correo electrónico</label>
+          <div class="input-boxBUY">
+            <input type="email" id="email" name="email" required placeholder="tucorreo@example.com">
+          </div>
+        
+          <div class="pass-settingsBUY">
+            <label class="titleBUY">Configuración de pixel</label>
+            <ul class="optionsBUY">
+              <li class="optionBUY">
+                <input type="checkbox" id="venderpixel" name="venderpixel" value="sí" checked>
+                <label for="venderpixel">
+                  Quiero que mi píxel esté disponible para venta en el futuro.
+                </label>
+              </li>
+              <li class="optionBUY">
+                <input type="checkbox" id="recibirclicks" name="recibirclicks" value="sí">
+                <label for="recibirclicks">
+                  Deseo recibir estadísticas sobre la cantidad de clics que reciba mi píxel.
+                </label>
+              </li>
+            </ul>
+          </div>
+        
+          <button type="submit" class="generate-btnBUY">Enviar Solicitud</button>
+        </form>
+        
+      </div>
+    </div>
+  </div>
+  
+
+  <script>
+  // Mostrar el pop-up
+  document.querySelector('.btn-buy').addEventListener('click', function () {
+    document.getElementById('popupBUY').classList.remove('hidden');
+  });
+
+  // Función para cerrar el pop-up y ocultar el anuncio
+  function cerrarPopupYAnuncio() {
+    document.getElementById('popupBUY').classList.add('hidden');
+    const promoSection = document.querySelector('.info-section');
+    if (promoSection) {
+      promoSection.style.display = 'none';
+    }
+  }
+
+  // Cerrar con botón X
+  document.querySelector('.closeBUY').addEventListener('click', cerrarPopupYAnuncio);
+
+  // Cerrar si se hace clic fuera del contenido
+  window.addEventListener('click', function (e) {
+    const popup = document.getElementById('popupBUY');
+    if (e.target === popup) {
+      cerrarPopupYAnuncio();
+    }
+  });
+  </script>
 
     <div class="grid-container">
       <div class="grid" id="pixelGrid"></div>
@@ -43,7 +152,7 @@
         <a href="#">FAQ</a>
         <a href="#">Contacto</a>
       </div>
-      <p>&copy; 2025 - By ᗩᔕ༒尺۝</p>
+      <p>&copy; 2025 - By <a href="https://negossolutions.github.io/astropages/esindex.html" target="_blank">ᗩᔕ༒尺۝</a></p>
     </div>
   </footer>
 
@@ -65,10 +174,6 @@
       }, 3000);
     }
     
-    // Botón de compra
-    document.querySelector('.btn-buy').addEventListener('click', function() {
-      alert('¡Función de compra de píxeles! Implementa aquí tu lógica de compra.');
-    });
 
     fetch("pixels.json")
       .then(response => response.json())
