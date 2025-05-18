@@ -11,8 +11,8 @@ function idioma() {
     let id = check.checked;
     if (id) {
         // Redirige al usuario a la página deseada
-        location.href = "es.html";
+        location.href = "es/";
     }else{
-        location.href = "index.html";
+        location.href = "../";
     }
 }
